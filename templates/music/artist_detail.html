@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artist.name }} - Певцы СНГ{% endblock %}
+
+{% block content %}
+<!-- Artist Header -->
+<section class="artist-detail-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center mb-4 mb-md-0">
+                <img src="{{ artist.photo|default:'https://via.placeholder.com/200x200/667eea/ffffff?text=No+Photo' }}" alt="{{ artist.name }}" class="artist-detail-img">
+            </div>
+            <div class="col-md-9 text-center text-md-start">
+                <h1 class="display-4 fw-bold mb-2">{{ artist.name }}</h1>
+                <div class="mb-3">
+                    <span class="badge bg-light text-dark fs-6 me-2">{{ artist.country }}</span>
+                    {% if artist.genre %}
+                    <span class="badge bg-secondary fs-6">{{ artist.genre }}</span>
+                    {% endif %}
+                </div>
+                <p class="lead mb-0">
+                    <i class="bi bi-music-note me-2"></i>{{ songs|length }} песен в коллекции
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Artist Bio -->
+{% if artist.bio %}
+<section class="py-4">
+    <div class="container">
+        <div class="card" style="background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Биография</h5>
+                <p class="card-text">{{ artist.bio }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Songs List -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title mb-4">
+            <i class="bi bi-music-note-list me-2"></i>Песни
+        </h2>
+        
+        {% for song in songs %}
+        <a href="{% url 'music:song_detail' song.id %}" class="text-decoration-none">
+            <div class="song-item">
+                <div class="song-number">{{ forloop.counter }}</div>
+                <div class="song-info flex-grow-1">
+                    <h5 class="text-white">{{ song.title }}</h5>
+                    <p>
+                        {% if song.album %}<i class="bi bi-disc me-1"></i>{{ song.album }}{% endif %}
+                        {% if song.year %}<i class="bi bi-calendar ms-3 me-1"></i>{{ song.year }}{% endif %}
+                    </p>
+                </div>
+                <i class="bi bi-chevron-right text-muted"></i>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="bi bi-music-note display-1 text-muted"></i>
+            <p class="mt-3 text-muted">У этого артиста пока нет песен в базе данных</p>
+        </div>
+        {% endfor %}
+        
+        <div class="mt-4">
+            <a href="{% url 'music:artists_list' %}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-2"></i>Назад к списку артистов
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

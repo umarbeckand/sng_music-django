@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}{{ song.title }} - {{ song.artist.name }}{% endblock %}
+
+{% block content %}
+<!-- Song Header -->
+<section class="py-5" style="background: var(--primary-gradient);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'music:home' %}" class="text-white">Главная</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'music:songs_list' %}" class="text-white">Песни</a></li>
+                        <li class="breadcrumb-item active text-white-50" aria-current="page">{{ song.title }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">{{ song.title }}</h1>
+                <p class="lead mb-3">
+                    <i class="bi bi-person me-2"></i>
+                    <a href="{% url 'music:artist_detail' song.artist.id %}" class="text-white text-decoration-none">{{ song.artist.name }}</a>
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    {% if song.album %}
+                    <span class="badge bg-light text-dark fs-6">
+                        <i class="bi bi-disc me-1"></i>{{ song.album }}
+                    </span>
+                    {% endif %}
+                    {% if song.year %}
+                    <span class="badge bg-light text-dark fs-6">
+                        <i class="bi bi-calendar me-1"></i>{{ song.year }}
+                    </span>
+                    {% endif %}
+                    <span class="badge bg-light text-dark fs-6">
+                        <i class="bi bi-globe me-1"></i>{{ song.artist.country }}
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                <a href="{% url 'music:artist_detail' song.artist.id %}">
+                    <img src="{{ song.artist.photo|default:'https://via.placeholder.com/200x200/667eea/ffffff?text=No+Photo' }}" alt="{{ song.artist.name }}" class="artist-detail-img">
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- YouTube Video -->
+{% if song.youtube_url %}
+<section class="py-4">
+    <div class="container">
+        <div class="card" style="background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-youtube text-danger me-2"></i>Слушать на YouTube</h5>
+                <div class="ratio ratio-16x9">
+                    <iframe src="{{ song.youtube_url|youtube_embed }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Lyrics -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title mb-4">
+            <i class="bi bi-file-text me-2"></i>Текст песни
+        </h2>
+        {% if song.lyrics %}
+        <div class="lyrics-box">
+            {{ song.lyrics }}
+        </div>
+        {% else %}
+        <div class="text-center py-5" style="background: var(--card-bg); border-radius: 20px;">
+            <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+            <p class="mt-3 text-muted">Текст песни пока недоступен</p>
+        </div>
+        {% endif %}
+        
+        <div class="mt-4 d-flex gap-3">
+            <a href="{% url 'music:artist_detail' song.artist.id %}" class="btn btn-primary">
+                <i class="bi bi-person me-2"></i>Все песни {{ song.artist.name }}
+            </a>
+            <a href="{% url 'music:songs_list' %}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-2"></i>Назад к списку песен
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

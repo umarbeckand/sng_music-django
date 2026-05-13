@@ -1,0 +1,4 @@
+Django==4.2.15
+asgiref==3.7.2
+sqlparse==0.5.5
+waitress==2.1.2

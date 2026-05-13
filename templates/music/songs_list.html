@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Песни - Певцы СНГ{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-music-note-list me-3"></i>Все песни
+            </h1>
+            <p class="lead text-muted">Коллекция лучших песен артистов СНГ</p>
+        </div>
+        
+        <!-- Search and Filters -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <form method="get" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control search-box" placeholder="Поиск песен или артистов..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex flex-wrap justify-content-md-end">
+                    <a href="{% url 'music:songs_list' %}" class="filter-badge {% if not selected_year %}active{% endif %}">Все года</a>
+                    {% for y in years %}
+                    <a href="?year={{ y }}" class="filter-badge {% if selected_year == y|stringformat:'i' %}active{% endif %}">{{ y }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Songs List -->
+        {% for song in songs %}
+        <a href="{% url 'music:song_detail' song.id %}" class="text-decoration-none">
+            <div class="song-item">
+                <div class="song-number">{{ forloop.counter }}</div>
+                <div class="song-info flex-grow-1">
+                    <h5 class="text-white">{{ song.title }}</h5>
+                    <p>
+                        <i class="bi bi-person me-1"></i>{{ song.artist.name }}
+                        {% if song.album %}<i class="bi bi-disc ms-3 me-1"></i>{{ song.album }}{% endif %}
+                        {% if song.year %}<i class="bi bi-calendar ms-3 me-1"></i>{{ song.year }}{% endif %}
+                    </p>
+                </div>
+                <i class="bi bi-chevron-right text-muted"></i>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="mt-3 text-muted">Песни не найдены</p>
+            <a href="{% url 'music:songs_list' %}" class="btn btn-primary mt-3">
+                <i class="bi bi-arrow-left me-2"></i>Сбросить фильтры
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
